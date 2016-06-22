@@ -1,0 +1,95 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+	<title>Symmetrical Subscription Plugin Readme</title>
+	<style type="text/css">
+	  BODY {
+	     font-size : 100%;
+	  }
+
+	  BODY, TD, TH {
+	     font-family : tahoma, verdana, arial, helvetica, sans-serif;
+	     font-size : 0.8em;
+	  }
+
+	  H2 {
+	     font-size : 10pt;
+	     font-weight : bold;
+	  }
+
+     A:hover {
+	     text-decoration : none;
+	  }
+     
+	  H1 {
+	     font-family : tahoma, arial, helvetica, sans-serif;
+	     font-size : 1.4em;
+	     font-weight: bold;
+	     border-bottom : 1px #ccc solid;
+	     padding-bottom : 2px;
+	  }
+
+	  TT {
+	     font-family : courier new;
+	     font-weight : bold;
+	     color : #060;
+	  }
+     
+	  PRE {
+	     font-family : courier new;
+	     font-size : 100%;
+	  }
+	</style>
+</head>
+<body>
+
+<h1>
+Symmetrical Subscription Plugin Readme
+</h1>
+
+<h2>Overview</h2>
+<p>
+When installed, this plugin only allow bidirectional subscriptions. 
+Basically, what it does is : 
+1 - When an user accepts a sub request, he automatically sends one back.
+2 - When an user is subscribed (or wating to be subscribed) to another, he automatically accept subscription requests from that user
+3 - When an user recieve an unsubscribe request, he automatically sends one (if he's subscribed) or cancel any pending subscription requests
+
+Since it does not make sense when interaction with other domains (which may not have the same policy), it can be enabled for local requests only.
+</p>
+
+<h2>Installation</h2>
+<p>
+Copy the file, symmetricalsub.jar into the plugins directory of your Openfire installation. The plugin will
+then be automatically deployed. To upgrade to a new version: 1) go to the plugin screen of the Admin
+Console, 2) click on the delete icon on the same row as the currently installed symmetricalsub plugin, 3) 
+copy the new symmetricalsub.jar into the plugins directory of your Openfire installation.
+</p>
+
+<h2>Configuration</h2>
+<p>
+The symmetricalsub plugin is configured via Symmetrical Subscription Properties sidebar item which can found under the 
+Sever tab in Openfire Admin Console. The symmetricalsub plugin can be configured in the following ways:
+<ul>
+<p>
+<li>Disabled (Default setting) - The server allows asymmetrical relationship.</li>
+</p>
+<p>
+<li>Enabled - All relationships are symmetrical.</li>
+<ul>
+<li>Local - Only subscription requests sent by users <u>who have</u> an account on the Openfire server on which
+the plugin is installed, will be symmetrical.</li>
+<li>All - All subscription requests, even to other servers, are treated as if symmetrical.</li>
+</ul>
+</p>
+</ul>
+</p>
+
+<h2>Using the Plugin</h2>
+<p>
+Once the plugin has been installed and configured there is no additional steps are required to use the plugin.
+</p>
+<br>
+</body>
+</html>
