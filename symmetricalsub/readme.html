@@ -53,7 +53,7 @@ Symmetrical Subscription Plugin Readme
 When installed, this plugin only allow bidirectional subscriptions. 
 Basically, what it does is : 
 1 - When an user accepts a sub request, he automatically sends one back.
-2 - When an user is subscribed (or wating to be subscribed) to another, he automatically accept subscription requests from that user
+2 - When an user is subscribed (or requesting subscription) to a contact, he automatically accept subscription requests from that contact
 3 - When an user recieve an unsubscribe request, he automatically sends one (if he's subscribed) or cancel any pending subscription requests
 
 Since it does not make sense when interaction with other domains (which may not have the same policy), it can be enabled for local requests only.
@@ -78,9 +78,9 @@ Sever tab in Openfire Admin Console. The symmetricalsub plugin can be configured
 <p>
 <li>Enabled - All relationships are symmetrical.</li>
 <ul>
-<li>Local - Only subscription requests sent by users <u>who have</u> an account on the Openfire server on which
+<li>Local - Only subscription requests sent by users <u>who have</u> an account on the domain on which
 the plugin is installed, will be symmetrical.</li>
-<li>All - All subscription requests, even to other servers, are treated as if symmetrical.</li>
+<li>All - All subscription requests, even to other domains, are treated as if symmetrical.</li>
 </ul>
 </p>
 </ul>
