@@ -53,14 +53,14 @@ public class SymmetricalSubPlugin implements Plugin {
     private SuscriptionPacketInterceptor interceptor = new SuscriptionPacketInterceptor();
 
     private PresenceRouter router;
-    private String serverName;
+    private String serverDomain;
     private RosterManager rosterManager;
     
     public SymmetricalSubPlugin() {
         
         XMPPServer server = XMPPServer.getInstance();
         router = server.getPresenceRouter();
-        serverName = server.getServerInfo().getXMPPDomain();
+        serverDomain = server.getServerInfo().getXMPPDomain();
         rosterManager = server.getRosterManager();
     }
 
@@ -73,7 +73,7 @@ public class SymmetricalSubPlugin implements Plugin {
         interceptor = null;
 
         router = null;
-        serverName = null;
+        serverDomain = null;
     }
 
     public void setSymmetricalSubMode(String mode) {
@@ -96,17 +96,20 @@ public class SymmetricalSubPlugin implements Plugin {
                 Presence presencePacket = (Presence) packet;
 
                 Type presenceType = presencePacket.getType();
-                if (presenceType == null ) 
+                if (presenceType == null) 
                     return;
                 
                 JID toJID = presencePacket.getTo();
                 JID fromJID = presencePacket.getFrom();
  
+                if (toJID == null || fromJID == null)  
+                    return; // Discard packets sent to the server himself
+                
                 if (mode.equals(LOCAL)) {
                     String toDomain = toJID.getDomain();
                     String fromDomain = fromJID.getDomain();
 
-                    if (!toDomain.equals(serverName) || !fromDomain.equals(serverName)) {
+                    if (!toDomain.equals(serverDomain) || !fromDomain.equals(serverDomain)) {
                         return;
                     }
                 } 
@@ -158,16 +161,33 @@ public class SymmetricalSubPlugin implements Plugin {
                         
                         throw new PacketRejectedException();
                     }
-                } else {
+                } else { // ! incoming
                     if ( presenceType.equals(Presence.Type.subscribed) ) {
-                        // Case 1 in readme 
-                        // User accepts a sub request : Also send an "opposite" sub request 
-                        Log.info("SymmetricalSub #1 : " + fromJID.toBareJID() + " has accepted an subscribe request from " + toJID.toBareJID() + " : send an opposite sub request" );
-                        Presence presence = new Presence();
-                        presence.setType(Presence.Type.subscribe);
-                        presence.setTo(fromJID);
-                        presence.setFrom(toJID);
-                        router.route(presence);
+                        
+                        RosterItem rosterItem = null;
+                        try {
+                            String fromNode = fromJID.getNode();
+                            Roster roster = rosterManager.getRoster(fromNode);
+                            rosterItem = roster.getRosterItem(toJID);
+                        } catch( UserNotFoundException e) {
+                            // user or contact not found, it's ok, just do nothing
+                        }
+
+                        boolean userIsNotSuscribedYet = 
+                            ( rosterItem == null ) ||
+                            (   ( rosterItem.getSubStatus() != RosterItem.SUB_TO ) &&
+                                ( rosterItem.getSubStatus() == RosterItem.SUB_BOTH ) );
+
+                        if(userIsNotSuscribedYet) {
+                            // Case 1 in readme 
+                            // User accepts a sub request, if not already subscribed the other way : send an "opposite" sub request 
+                            Log.info("SymmetricalSub #1 : " + fromJID.toBareJID() + " has accepted an subscribe request from " + toJID.toBareJID() + " : send an opposite sub request" );
+                            Presence presence = new Presence();
+                            presence.setType(Presence.Type.subscribe);
+                            presence.setTo(fromJID);
+                            presence.setFrom(toJID);
+                            router.route(presence);
+                        }
                     }
                 }
             }
